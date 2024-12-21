@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashify</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='hashify.css') }}">
+</head>
+<body>
+    <video  autoplay muted loop  class="background-video">
+        <source src="/static/binary1.mp4" type="video/mp4">
+        Your browser does not support the video tag.
+    </video>
+    <div class="content">
+        <h1><span class="typing"></span><span class="cursor"></span></h1>
+        <p class="p">Join us and start hashing!</p>
+        <a href="{{ url_for('loading') }}" class="button" aria-label="Join us">
+            <img src="/static/joinbutton.png" alt="Join us" class="button-image">
+        </a>
+        
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+    const textElement = document.querySelector(".typing");
+    const text = "Welcome";
+    let index = 0;
+
+    function type() {
+        if (index < text.length - 1) {
+            textElement.innerHTML += text[index];
+            index++;
+            setTimeout(type, 200);  // Adjust typing speed
+        } else if (index === text.length - 1) {
+            // Add the last letter "E" with a blinking effect
+            textElement.innerHTML += `<span class="blinking">${text[index]}</span>`;
+            index++;
+        }
+        }
+
+        type();
+    });
+
+    </script>    
+</body>
+</html>

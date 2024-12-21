@@ -1,0 +1,107 @@
+@font-face {
+    font-family: 'gameplay'; /* Choose a custom name */
+     src: url('fonts/joystix monospace.otf') format('opentype'); /* Path to your font */
+   }
+body, html {
+    height: 100%;
+    margin: 0;
+    background-color: black;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: rgb(216, 255, 217);
+}
+#hashify-title {
+    display: none;
+    margin-top: 20px; 
+    margin-bottom: 60px; 
+    padding-bottom: 30px;
+    position: absolute;  /* Position it independently */
+    top: 0%;  /* Place it at 10% from the top of the viewport */
+    left: 50%;  /* Horizontally center it */
+    transform: translateX(-50%);  /* Adjust for true centering */
+    font-size: 50px;
+    font-family: 'gameplay', Arial, sans-serif;
+    
+    
+}
+
+.background-video {
+    position: fixed;
+    top: 50%; /* Center the video vertically */
+    left: 50%; /* Center the video horizontally */
+    transform: translate(-50%, -50%); /* Adjust to truly center the video */
+    z-index: -1;
+    width: 60%; /* Resize the video width */
+    height: auto; /* Maintain aspect ratio */
+    object-fit: contain; /* Ensure the video maintains its aspect ratio */
+}
+
+#content {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    margin-top: 80px;
+    gap: 5px;
+}
+
+.button-container {
+    display: inline-flex; /* Makes the container adjust to the size of the content (button) */
+    flex-direction: column;
+    gap: 0px; /* Space between buttons */
+    align-items: center;
+    padding: 0;
+    width: auto; /* Container width adjusts based on content */
+    height: auto;
+}
+
+.button {
+    display: flex; /* Makes button content (like image) behave as a unit */
+    justify-content: center; /* Centers the image within the button */
+    align-items: center;
+    padding: 0;
+    margin: 0; /* Remove margin */
+    border: none;
+    background-color: transparent;
+    width: auto; /* Ensures button size adjusts to image size */
+    height: auto; /* Ensures button size adjusts to image size */
+    transition: transform 0.3s ease; /* Smooth resizing */
+    position: relative; /* Make sure the button's size matches the content */
+}
+
+.button:hover {
+    transform: scale(1.1); /* Slightly enlarge button on hover */
+}
+
+.button-image {
+    width: 70%; /* Image width adjusts based on button size */
+    height: auto; /* Image height adjusts based on width */
+    object-fit: contain; /* Maintain aspect ratio of the image */
+    display: block; 
+    margin-top: -180px; /* Adjusts the button position */
+}
+
+
+
+
+.gif-container {
+    display: flex; /* Use flexbox to center its contents */
+    justify-content: center; /* Horizontally center the content */
+    align-items: center; /* Vertically center the content */
+    margin-top: -80px; /* Adjust based on your layout */
+    width: 100%; /* Ensure the container takes up the full width */
+}
+
+#welcome-gif {
+    width: 100%;
+    max-width: 500px; /* Limit the width to avoid stretching */
+    height: auto; /* Maintain aspect ratio */
+    display: block; /* Ensure no extra space below the image */
+}
+
+
+
+ 

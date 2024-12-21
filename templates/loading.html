@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashify</title>
+    <link rel="stylesheet" href="/static/loading.css">
+</head>
+<body>
+    <div id="video-container" class="video-container">
+        <video id="background-video" autoplay muted class="background-video">
+            <source src="/static/loading.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+        </video>
+    </div>
+
+    <!-- Content that will be shown after the video ends -->
+    <h1 id="hashify-title">Ha$hify</h1>
+    <div id="content" style="display: none;">
+        <!-- Container for buttons -->
+        <div class="button-container">
+            <a href="/hashify#text-panel" class="button">
+                <img src="/static/textbutton.png" alt="Text Hash Button" class="button-image">
+            </a>
+            <a href="/hashify#file-panel" class="button">
+                <img src="/static/filebutton.png" alt="File Hash Button" class="button-image">
+            </a>
+        </div>
+        <!-- Separate container for welcome GIF -->
+        <div class="gif-container">
+            <img id="welcome-gif" src="/static/kitty_welcome.gif" alt="Welcome to Ha$hify!">
+        </div>
+    </div>
+
+    
+    
+</body>
+<script>
+    const video = document.getElementById('background-video');
+    const videoContainer = document.getElementById('video-container');
+    const content = document.getElementById('content');
+    const title = document.getElementById('hashify-title');
+    
+    // Listen for when the video ends
+    video.addEventListener('ended', () => {
+        document.body.style.backgroundColor = 'black';  // Change background to black
+        videoContainer.style.display = 'none';  // Hide the video container
+        content.style.display = 'block'; 
+        title.style.display = 'block'; 
+    });
+</script>
+</html>

@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hashify</title>
+    <link rel="stylesheet" href="/static/main.css">
+</head>
+
+<body>
+    <img id="jumping-cat" src="/static/pixel-cat.gif" alt="Jumping Cat" />
+    <div class="container" id="container">
+        <!-- Text Hash Section -->
+        <div class="panel" id="text-panel">
+            <form id="hash-form" method="POST" action="/hash-text">
+                <h1>Text Input</h1>
+                <textarea id="textInput" placeholder="Type your text here..." name="text"></textarea>
+                <select id="algorithm" name="algorithm">
+                    <option value="md5"
+                        title="MD5 is a widely used hashing algorithm that produces a 128-bit hash value, often represented as a 32-character hexadecimal number.">
+                        MD5</option>
+                    <option value="sha1"
+                        title="SHA-1 is a cryptographic hash function that produces a 160-bit hash value, but is now considered weak for security applications.">
+                        SHA-1</option>
+                    <option value="sha256"
+                        title="SHA-256 is part of the SHA-2 family and produces a 256-bit hash value, providing a more secure and robust hash than MD5 and SHA-1.">
+                        SHA-256</option>
+                    <option value="sha512"
+                        title="SHA-512 is part of the SHA-2 family and produces a 512-bit hash value, providing a more secure and robust hash than MD5, SHA-1, and SHA-256.">
+                        SHA-512</option>
+                    <option value="sha3_256"
+                        title="SHA-3 is a cryptographic hash function that produces a 256-bit hash value, providing a more secure and robust hash than SHA-2 family.">
+                        SHA-3-256</option>
+                    <option value="blake2b"
+                        title="BLAKE2 is a cryptographic hash function that is optimized for speed and security, with BLAKE2b producing a 512-bit hash value.">
+                        BLAKE2b</option>
+                </select>
+                <button type="submit">Generate Hash</button>
+                <button type="button" onclick="showCustomTextPopup()">Custom Hash</button>
+                <button type="button" onclick="openRecommendationPopup()">Recommend Algorithm</button>
+                <div id="result">Your hash will appear here...</div>
+            </form>
+        </div>
+
+        <!-- File Hash Section -->
+        <div class="panel" id="file-panel">
+            <form id="fileHashForm" action="/hash-file" method="POST">
+                <h1>File Input</h1>
+                <div class="drag-box" id="dragBox" onclick="document.getElementById('fileInput').click()">
+                    Click to Upload a File
+                </div>
+                <input type="file" id="fileInput" name="file"
+                    accept=".txt, .pdf, .docx, .xlsx, .jpg, .jpeg, .png, .gif, .csv" onchange="handleFileUpload(event)"
+                    style="display: none;">
+                <select id="fileAlgorithm" name="algorithm">
+                    <option value="md5"
+                        title="MD5 is a widely used hashing algorithm that produces a 128-bit hash value, often represented as a 32-character hexadecimal number.">
+                        MD5</option>
+                    <option value="sha1"
+                        title="SHA-1 is a cryptographic hash function that produces a 160-bit hash value, but is now considered weak for security applications.">
+                        SHA-1</option>
+                    <option value="sha256"
+                        title="SHA-256 is part of the SHA-2 family and produces a 256-bit hash value, providing a more secure and robust hash than MD5 and SHA-1.">
+                        SHA-256</option>
+                    <option value="sha512"
+                        title="SHA-512 is part of the SHA-2 family and produces a 512-bit hash value, providing a more secure and robust hash than MD5, SHA-1, and SHA-256.">
+                        SHA-512</option>
+                    <option value="sha3_256"
+                        title="SHA-3 is a cryptographic hash function that produces a 256-bit hash value, providing a more secure and robust hash than SHA-2 family.">
+                        SHA-3-256</option>
+                    <option value="blake2b"
+                        title="BLAKE2 is a cryptographic hash function that is optimized for speed and security, with BLAKE2b producing a 512-bit hash value.">
+                        BLAKE2b</option>
+                </select>
+                <button type="submit">Generate Hash</button>
+                <button type="button" onclick="showCustomFilePopup()">Custom Hash</button>
+                <button type="button" onclick="openRecommendationPopup()">Recommend Algorithm</button>
+                <!--<div id="fileResult"></div>-->
+            </form>
+        </div>
+    </div>
+
+    <div id="popupOverlay" class="popup-overlay" onclick="closePopup()"></div>
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <div>
+                <h3>Original File Content</h3>
+                <pre id="popupOriginalContent"></pre>
+            </div>
+            <div>
+                <h3>Generated Hash</h3>
+                <pre id="popupFileHash"></pre>
+            </div>
+        </div>
+        <div class="separator-line"></div>
+        <button class="popup-button" onclick="closePopup()">Close</button>
+    </div>
+
+    <div id="customFilePopupOverlay" class="popup-overlay" onclick="closeCustomFilePopup()"></div>
+    <div id="customFilePopup" class="popup">
+        <h3>Enter Custom Hash Key</h3>
+        <input type="text" id="customFileHashKey" placeholder="Enter your key..."
+            style="width: 80%; padding: 10px; font-family: 'gameplay', Arial, sans-serif;">
+        <button class="popup-button" onclick="generateCustomFileHash() ; startExplanation(true)">Generate Custom
+            Hash</button>
+        <button class="popup-button" onclick="showFileExplanationBox()">Know More</button>
+        <div id="fileExplanationBox" class="explanation">
+            <img id="gato-cat" src="/Ha-hify/static/gato-celeste.gif" alt="Gato Cat" />
+        </div>
+        <button class="popup-button" onclick="closeCustomFilePopup()">Close</button>
+    </div>
+
+    <div id="customTextPopupOverlay" class="popup-overlay" onclick="closeCustomTextPopup()"></div>
+    <div id="customTextPopup" class="popup">
+        <h3>Enter Custom Hash Key</h3>
+        <input type="text" id="customTextHashKey" placeholder="Enter your key..."
+            style="width: 80%; padding: 10px; font-family: 'gameplay', Arial, sans-serif;">
+        <button class="popup-button" onclick="generateCustomTextHash() ; startExplanation(false)">Generate Custom
+            Hash</button>
+        <button class="popup-button" onclick="showTextExplanationBox()">Know More</button>
+        <div id="textExplanationBox" class="explanation">
+            <img id="gato-cat" src="/Ha-hify/static/gato-celeste.gif" alt="Gato Cat" />
+        </div>
+        <button class="popup-button" onclick="closeCustomTextPopup()">Close</button>
+    </div>
+
+    <div id="recommendationPopupOverlay" class="popup-overlay" onclick="closeRecommendationPopup()"></div>
+    <div id="recommendationPopup" class="popup">
+        <h3 style="margin-bottom: 25px;">Select Your Hashing Preference</h3>
+
+        <form id="hashPreferenceForm" class="popup-radio-group">
+            <label>
+                <input type="radio" name="hashPreference" value="security" checked>
+                <span>Security</span>
+            </label>
+            <label>
+                <input type="radio" name="hashPreference" value="speed">
+                <span>Speed</span>
+            </label>
+            <label>
+                <input type="radio" name="hashPreference" value="compatibility">
+                <span>Compatibility</span>
+            </label>
+        </form>
+        <div id="popupRecommendationContent" style="margin-top: 20px; font-weight: bold; margin-bottom: 15px;"></div>
+        <button class="popup-button" onclick="generateRecommendation()">Get Recommendation</button>
+
+        <button class="popup-button" onclick="closeRecommendationPopup()">Close</button>
+    </div>
+
+
+    <div id="switchButton" style="position: fixed; bottom: 10px; left: 10px; z-index: 1000;">
+        <button style="all: unset; display: inline-block; padding: 0;  background: none;" alt="Switch"
+            title="Switch between text and file hashing">
+            <img src="/static/greenkitten1.png" alt="Switch" width="220" height="200"
+                onclick="window.location.hash = window.location.hash === '#file-panel' ? '#text-panel' : '#file-panel';">
+        </button>
+    </div>
+    <script>
+        const container = document.getElementById('container');
+        const dragBox = document.getElementById('dragBox');
+
+
+        function handleFileUpload(event) {
+            const file = event.target.files[0];
+            const fileName = file.name;
+            dragBox.textContent = fileName; // Show file name in the drag-box
+            /*const reader = new FileReader();
+    
+            reader.onload = function () {
+                document.getElementById('fileResult').textContent = reader.result;
+            };
+    
+            if (file) {
+                reader.readAsText(file);
+            }*/
+        }
+        document.getElementById('hash-form').addEventListener('submit', function (event) {
+            event.preventDefault();  // Prevents the form from submitting normally
+
+            // Get form data
+            const formData = new FormData(this);
+
+            // Send POST request using fetch
+            fetch('/hash-text', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json().catch(() => {
+                        throw new Error('Invalid JSON response');
+                    });
+                })
+                .then(data => {
+                    // Update the result section with the generated hash
+                    document.getElementById('result').textContent = `${data.hash}`;
+                    closeCustomTextPopup();
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    document.getElementById('result').textContent = 'Error generating hash.';
+                });
+        });
+
+        document.getElementById('fileHashForm').addEventListener('submit', function (event) {
+            event.preventDefault();
+
+            // Ensure FormData is always freshly created
+            const formData = new FormData(document.getElementById('fileHashForm'));
+
+            console.log("Sending File Hash Request with:");
+            for (let pair of formData.entries()) {
+                console.log(pair[0] + ": " + pair[1]);  // Debugging algorithm selection
+            }
+
+            fetch('/hash-file', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.error) {
+                        alert(data.error);
+                    } else {
+                        // Reset the popup content before displaying
+                        document.getElementById('popupOriginalContent').textContent = "";
+                        document.getElementById('popupFileHash').textContent = "";
+
+                        // Display new hash
+                        document.getElementById('popupOriginalContent').textContent = data.fileContent;
+                        document.getElementById('popupFileHash').textContent = data.hash;
+
+                        // Show popup
+                        document.getElementById('popup').classList.add('show');
+                        document.getElementById('popupOverlay').style.display = 'block';
+
+                        closeCustomFilePopup();
+
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        });
+
+        function closePopup() {
+            document.getElementById('popupOverlay').style.display = 'none';
+            document.getElementById('popup').classList.remove('show');
+        }
+
+        // Function to show the correct panel based on URL hash
+        function showPanel() {
+            const hash = window.location.hash; // Get hash fragment
+            const textPanel = document.getElementById('text-panel');
+            const filePanel = document.getElementById('file-panel');
+
+            // Hide both panels initially
+            textPanel.style.display = 'none';
+            filePanel.style.display = 'none';
+
+            // Show the correct panel based on the hash
+            if (hash === '#file-panel') {
+                filePanel.style.display = 'block';
+            } else {
+                // Default to the text panel if no hash or unknown hash is present
+                textPanel.style.display = 'block';
+            }
+        }
+
+        window.addEventListener('hashchange', showPanel);
+        window.onload = function () {
+            showPanel(); // Ensure the correct panel is shownn
+        };
+
+
+        function showCustomFilePopup() {
+            document.getElementById('customFilePopup').classList.add('show');
+            document.getElementById('customFilePopupOverlay').style.display = 'block';
+        }
+
+        function closeCustomFilePopup() {
+            document.getElementById('customFilePopupOverlay').style.display = 'none';
+            document.getElementById('customFilePopup').classList.remove('show');
+            document.getElementById("fileExplanationBox").style.display = "none";
+            document.getElementById("gato-cat").style.display = "none";
+        }
+        function showCustomTextPopup() {
+            document.getElementById('customTextPopup').classList.add('show');
+            document.getElementById('customTextPopupOverlay').style.display = 'block';
+        }
+
+        function closeCustomTextPopup() {
+            document.getElementById('customTextPopupOverlay').style.display = 'none';
+            document.getElementById('customTextPopup').classList.remove('show');
+            document.getElementById("textExplanationBox").style.display = "none";
+            document.getElementById("gato-cat").style.display = "none";
+        }
+        function generateCustomFileHash() {
+            const key = document.getElementById('customFileHashKey').value;
+            const fileInput = document.getElementById('fileInput').files[0];
+
+            // Validate inputs
+            if (!key) {
+                alert('Please enter a key!');
+                return;
+            }
+            if (!fileInput) {
+                alert('Please upload a file!');
+                return;
+            }
+
+            // Proceed to generate hash
+            console.log('Key:', key);
+            console.log('File Input:', fileInput);
+
+            // Create a FormData object to send the file and key
+            const formData = new FormData();
+            formData.append('file', fileInput);
+            formData.append('key', key);
+
+            // Send the data via fetch to the backend
+            fetch('/hash-file', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => response.json())
+                .then(data => {
+                    console.log('Response data:', data);
+                    if (data.error) {
+                        alert(data.error);  // If there was a server-side error
+                    } else {
+                        document.getElementById('popupOriginalContent').textContent = data.fileContent; // Show original content
+                        document.getElementById('popupFileHash').textContent = data.hash; // Show generated hash
+                        document.getElementById('popup').classList.add('show');
+                        document.getElementById('popupOverlay').style.display = 'block';
+                        closeCustomFilePopup(); // Close the popup after generating hash
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        function generateCustomTextHash() {
+            const key = document.getElementById('customTextHashKey').value;
+            const textInput = document.getElementById('textInput').value;
+
+            // Check for key and text input validity before proceeding
+            if (!key) {
+                alert('Please enter a key!');
+                return;
+            }
+            if (!textInput) {
+                alert('Please enter some text!');
+                return;
+            }
+
+            // Now proceed with the hash generation
+            console.log('Key:', key);
+            console.log('Text Input:', textInput);
+
+            // Create a FormData object to send the text and key
+            const formData = new FormData();
+            formData.append('text', textInput);
+            formData.append('key', key);
+
+            // Send the data via fetch to the backend
+            fetch('/hash-text', {
+                method: 'POST',
+                body: formData
+            })
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    console.log('Response data:', data);
+                    document.getElementById('result').textContent = data.hash;
+                    closeCustomTextPopup(); // Close the popup after generating hash
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
+        }
+
+        let isFileHash = false;
+        const textHashExplanation = [
+            "Meowdy, hooman! 🐱✨ Let me pounce on this topic! Key Makes It Purr-fect...",
+            " The key can *shift* each character of your text, making it extra special!",
+            "We find a shift value from the key by adding up all the little ASCII values (like counting my whiskers!).",
+            " If the shift value is 3, then: 'A' becomes 'D', 'B' becomes 'E' (I’m a clever kitty! 🐾)",
+            "After we’ve done our shifting, we use SHA-256 to whip up a unique hash from the transformed data.",
+            " It’s like magic for your text! 🎩✨"
+        ];
+        const fileHashExplanation = [
+            "Hey there, furriend! Let’s chat about files! 🐾",
+            "We read your file’s data one byte at a time, like nibbling on treats! 🍬",
+            "Just like with text, we shift each byte using the key! It’s like giving each byte a little twirl! 🌀",
+            "Finally, we hash that shifted file data using SHA-256, creating a super secure hash!",
+            " It’s like wrapping your file in a cozy blanket! 🛌💕"
+        ];
+
+        function startExplanation(fileHash) {
+            isFileHash = fileHash;
+        }
+        function showTextExplanationBox() {
+            showExplanation("textExplanationBox", textHashExplanation);
+            document.getElementById("gato-cat").style.display = "block";
+        }
+        function showFileExplanationBox() {
+            showExplanation("fileExplanationBox", fileHashExplanation);
+            document.getElementById("gato-cat").style.display = "block";
+        }
+        function showExplanation(boxId, steps) {
+            const explanationBox = document.getElementById(boxId);
+            explanationBox.style.display = "block";
+            let i = 0;
+            function typeEffect(text, callback) {
+                let j = 0;
+                explanationBox.innerHTML = "";
+                function type() {
+                    if (j < text.length) {
+                        explanationBox.innerHTML += text[j];
+                        j++;
+                        setTimeout(type, 100);
+                    } else {
+                        setTimeout(callback, 2000);
+                    }
+                }
+                type();
+            }
+            function showNext() {
+                if (i < steps.length) {
+                    typeEffect(steps[i], () => {
+                        i++;
+                        setTimeout(() => {
+                            explanationBox.innerHTML = "";
+                            showNext();
+                        }, 700);
+                    });
+                }
+            }
+            showNext();
+        }
+        function openRecommendationPopup() {
+            document.getElementById("recommendationPopupOverlay").style.display = "block";
+            document.getElementById("recommendationPopup").classList.add("show");
+        }
+
+        function closeRecommendationPopup() {
+            document.getElementById("recommendationPopupOverlay").style.display = "none";
+            document.getElementById("recommendationPopup").classList.remove("show");
+        }
+
+        function generateRecommendation() {
+            let preference = document.querySelector('input[name="hashPreference"]:checked').value;
+            let recommendation = "";
+
+            if (preference === "security") {
+                recommendation = "SHA-3 (sha3_256) or BLAKE2 are the most secure options.";
+            } else if (preference === "speed") {
+                recommendation = "BLAKE2b or SHA-256 offer a good balance between speed and security.";
+            } else if (preference === "compatibility") {
+                recommendation = "MD5 (not secure, but widely supported) or SHA-1 (legacy but still used in older systems).";
+            }
+
+            document.getElementById("popupRecommendationContent").innerHTML = `
+        <div>${recommendation}</div>
+    `;
+        }
+
+
+
+    </script>
+</body>
+
+</html>
